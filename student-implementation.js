@@ -47,7 +47,7 @@ async function fetchNews() {
     try {
         // TODO: Define the API endpoint
         // HINT: https://newsapi.org/v2/top-headlines
-        const url = '';
+        const url = 'https://newsapi.org/v2/top-headlines';
         
         // TODO: Set up query parameters
         // HINT: You need apiKey, country ('us'), category ('technology'), pageSize (5)
