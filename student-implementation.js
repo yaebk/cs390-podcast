@@ -236,48 +236,37 @@ async function generatePodcast() {
     console.log('='.repeat(60));
 
     try {
-        // TODO: Validate environment variables
-        // HINT: Use helpers.validateEnvironmentVariables() with array of required vars
         const requiredVars = ['NEWSAPI_KEY', 'OPENAI_API_KEY', 'ELEVENLABS_API_KEY'];
-        
+
         const validation = helpers.validateEnvironmentVariables(requiredVars);
-        
+
         if (!validation.valid) {
             console.error('\n❌ Missing required environment variables:');
             validation.missing.forEach(v => console.error(`   - ${v}`));
             console.error('\n💡 Copy .env.example to .env and add your API keys\n');
             process.exit(1);
         }
-        
+
         helpers.logSuccess('Environment variables validated');
-        
-        // TODO: Fetch news articles
-        // HINT: await fetchNews()
-        const articles = null;
-        
-        // TODO: Validate we got articles
+
+        const articles = await fetchNews();
+
         if (!articles || articles.length === 0) {
             throw new Error('No articles fetched');
         }
-        
-        // TODO: Generate podcast script
-        // HINT: await generateScript(articles)
-        const script = null;
-        
-        // TODO: Validate we got a script
+
+        const script = await generateScript(articles);
+
         if (!script || script.length === 0) {
             throw new Error('No script generated');
         }
-        
-        // TODO: Generate audio
-        // HINT: await generateAudio(script)
-        const audioFilePath = null;
-        
-        // TODO: Validate we got an audio file
+
+        const audioFilePath = await generateAudio(script);
+
         if (!audioFilePath) {
             throw new Error('No audio file generated');
         }
-        
+
         // Print final summary
         console.log('\n' + '='.repeat(60));
         console.log('🎉 PODCAST GENERATION COMPLETE!');
@@ -288,7 +277,7 @@ async function generatePodcast() {
         console.log('\n📁 Check the /output folder for your files!');
         console.log('🎧 Listen to your AI-generated podcast!');
         console.log('='.repeat(60) + '\n');
-        
+
         return {
             success: true,
             articlesCount: articles.length,
@@ -296,11 +285,11 @@ async function generatePodcast() {
             scriptLength: script.length,
             audioFile: audioFilePath
         };
-        
+
     } catch (error) {
         console.error('\n❌ PODCAST GENERATION FAILED');
         console.error('Error:', error.message);
-        console.error('\n💡 Check the error messages above for details\n');
+        console.error('\n💡 Check the error messages above f pror details)
         process.exit(1);
     }
 }
