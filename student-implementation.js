@@ -126,8 +126,7 @@ async function generateScript(articles) {
 
         //headers, need bearer token
         const headers = {
-            Authorization: 'Bearer ${process.env.OPENAI_API_KEY}',
-            'Content-Type': 'application/json'
+            Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, 'Content-Type': 'application/json'
         };
 
        //request data
