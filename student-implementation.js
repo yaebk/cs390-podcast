@@ -143,7 +143,7 @@ async function generateScript(articles) {
             max_tokens: 500
         };
 
-        const response = await axios.post(url, data, { headers };
+        const response = await axios.post(url, data, { headers });
 
         if (!helpers.isValidApiResponse(response)) {
             helpers.handleApiError(new Error('Invalid OpenAI response'), 'OpenAI');
@@ -291,18 +291,21 @@ async function generatePodcast() {
 
         helpers.logSuccess('Environment variables validated');
 
+        //fetch new articles
         const articles = await fetchNews();
 
         if (!articles || articles.length === 0) {
             throw new Error('No articles fetched');
         }
 
+        //generate podcast script
         const script = await generateScript(articles);
 
         if (!script || script.length === 0) {
             throw new Error('No script generated');
         }
 
+        //convert to audio
         const audioFilePath = await generateAudio(script);
 
         if (!audioFilePath) {
