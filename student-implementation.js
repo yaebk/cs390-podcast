@@ -105,28 +105,18 @@ async function fetchNews() {
  */
 async function generateScript(articles) {
     helpers.logStep(2, 'Generating podcast script with OpenAI');
-    
+
     try {
-        // TODO: Format articles for the AI
-        // HINT: Use helpers.formatArticlesForSummary(articles)
-        const formattedNews = '';
-        
-        // TODO: Create the AI prompt
-        // HINT: Use helpers.createPodcastPrompt(formattedNews)
-        const prompt = '';
-        
-        // TODO: Define the OpenAI endpoint
-        // HINT: https://api.openai.com/v1/chat/completions
-        const url = '';
-        
-        // TODO: Set up request headers
-        // HINT: Need Authorization: Bearer YOUR_API_KEY and Content-Type: application/json
+        const formattedNews = helpers.formatArticlesForSummary(articles);
+        const prompt = helpers.createPodcastPrompt(formattedNews);
+
+        const url = 'https://api.openai.com/v1/chat/completions';
+
         const headers = {
-            // Add headers here
+            Authorization: 'Bearer ${process.env.OPENAI_API_KEY}',
+            'Content-Type': 'application/json'
         };
-        
-        // TODO: Create the request body
-        // HINT: Need model (use 'gpt-3.5-turbo'), messages array, temperature (0.7), max_tokens (500)
+
         const data = {
             model: 'gpt-3.5-turbo',
             messages: [
@@ -138,23 +128,16 @@ async function generateScript(articles) {
             temperature: 0.7,
             max_tokens: 500
         };
-        
-        // TODO: Make the POST request
-        // HINT: await axios.post(url, data, { headers })
-        const response = null;
-        
-        // TODO: Extract the script text
-        // HINT: response.data.choices[0].message.content
-        const script = '';
-        
+
+        const response = await axios.post(url, data, { headers };
+        const script = 'response.data.choices[0].message.content';
+
         helpers.logSuccess('Podcast script generated');
         console.log(`   Script length: ${script.length} characters`);
-        
-        // TODO: Save the script to a file
-        // HINT: Use helpers.saveTextFile(script, 'podcast-script.txt')
-        
+
+        helpers.saveTextFile(script, 'podcast-script.txt.');
         return script;
-        
+
     } catch (error) {
         helpers.handleApiError(error, 'OpenAI');
         throw new Error('Failed to generate podcast script');
