@@ -1,15 +1,15 @@
 /**
  * AI PODCAST GENERATOR - STUDENT IMPLEMENTATION
- * 
+ *
  * Build a backend application that fetches news, generates a podcast script with AI,
  * and converts it to audio. This teaches you fundamental backend development concepts.
- * 
+ *
  * GRADING BREAKDOWN:
  * - NewsAPI Integration (25 points)
  * - OpenAI Integration (25 points)
  * - ElevenLabs Integration (25 points)
  * - Main Orchestration (25 points)
- * 
+ *
  * TOTAL: 100 points
  */
 
@@ -23,22 +23,22 @@ const helpers = require('./api-helpers');
 
 /**
  * Fetch trending news articles from NewsAPI
- * 
+ *
  * BACKEND CONCEPTS LEARNED:
  * - HTTP GET requests
  * - Query parameters
  * - API key authentication
  * - JSON response parsing
- * 
+ *
  * API Documentation: https://newsapi.org/docs/endpoints/top-headlines
- * 
+ *
  * TODO: Complete this function to:
  * 1. Define the NewsAPI endpoint URL
  * 2. Set up query parameters (apiKey, country, category, pageSize)
  * 3. Make a GET request using axios
  * 4. Extract the articles array from the response
  * 5. Return the articles
- * 
+ *
  * @returns {Promise<Array>} - Array of article objects
  */
 async function fetchNews() {
@@ -57,16 +57,16 @@ async function fetchNews() {
         const response = await axios.get(url, {params});
 
         const articles = response.data.articles || [];
-        
+
         helpers.logSuccess(`Fetched ${articles.length} news articles`);
-        
+
         // Log article titles (helpful for debugging)
         articles.forEach((article, index) => {
             console.log(`   ${index + 1}. ${article.title}`);
         });
-        
+
         return articles;
-        
+
     } catch (error) {
         helpers.handleApiError(error, 'NewsAPI');
         throw new Error('Failed to fetch news articles');
@@ -79,16 +79,16 @@ async function fetchNews() {
 
 /**
  * Use OpenAI to generate an engaging podcast script
- * 
+ *
  * BACKEND CONCEPTS LEARNED:
  * - HTTP POST requests
  * - Bearer token authentication
  * - Request body formatting
  * - Working with AI APIs
  * - File system operations
- * 
+ *
  * API Documentation: https://platform.openai.com/docs/api-reference/chat
- * 
+ *
  * TODO: Complete this function to:
  * 1. Format articles into readable text (use helper)
  * 2. Create a prompt for the AI (use helper)
@@ -99,7 +99,7 @@ async function fetchNews() {
  * 7. Extract the generated script
  * 8. Save to file
  * 9. Return the script
- * 
+ *
  * @param {Array} articles - Array of news article objects
  * @returns {Promise<string>} - Generated podcast script
  */
@@ -150,15 +150,15 @@ async function generateScript(articles) {
 
 /**
  * Convert text to speech using ElevenLabs API
- * 
+ *
  * BACKEND CONCEPTS LEARNED:
  * - Binary data handling
  * - Custom header authentication
  * - ArrayBuffer responses
  * - Audio file formats
- * 
+ *
  * API Documentation: https://elevenlabs.io/docs/api-reference/text-to-speech
- * 
+ *
  * TODO: Complete this function to:
  * 1. Get the voice ID from environment or use default
  * 2. Construct the ElevenLabs endpoint with voice ID
@@ -167,30 +167,22 @@ async function generateScript(articles) {
  * 5. Make POST request with responseType: 'arraybuffer'
  * 6. Save the audio buffer to a file
  * 7. Return the file path
- * 
+ *
  * @param {string} text - The podcast script to convert to speech
  * @returns {Promise<string>} - Path to the saved audio file
  */
 async function generateAudio(text) {
     helpers.logStep(3, 'Converting text to speech with ElevenLabs');
-    
+
     try {
-        // TODO: Get the voice ID from environment or use default
-        // HINT: process.env.PODCAST_VOICE_ID || '21m00Tcm4TlvDq8ikWAM'
-        const voiceId = '21m00Tcm4TlvDq8ikWAM';
-        
-        // TODO: Construct the URL with voice ID
-        // HINT: `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`
-        const url = '';
-        
-        // TODO: Set up headers (IMPORTANT: ElevenLabs uses 'xi-api-key', not 'Authorization'!)
+        const voiceId = process.env.PODCAST_VOICE_ID || '21m00Tcm4TlvDq8ikWAM';
+        const url = 'https://api.elevenlabs.io/v1/text-to-speech/${voiceID}';
+
         const headers = {
             'xi-api-key': process.env.ELEVENLABS_API_KEY,
             'Content-Type': 'application/json'
         };
-        
-        // TODO: Set up the request body
-        // HINT: Need text, model_id ('eleven_monolingual_v1'), and voice_settings
+
         const data = {
             text: text,
             model_id: 'eleven_monolingual_v1',
@@ -199,23 +191,16 @@ async function generateAudio(text) {
                 similarity_boost: 0.75
             }
         };
-        
-        // TODO: Make the POST request (IMPORTANT: Must use responseType: 'arraybuffer'!)
-        // HINT: await axios.post(url, data, { headers, responseType: 'arraybuffer' })
-        const response = null;
-        
-        // TODO: Generate a filename with timestamp
-        // HINT: Use helpers.generateTimestampedFilename('podcast', 'mp3')
-        const filename = 'podcast.mp3';
-        
-        // TODO: Save the audio file
-        // HINT: Use helpers.saveAudioFile(response.data, filename)
-        const filePath = '';
-        
+
+        const response = await axios.post(url, data, {headers, responseType: 'arraybuffer'});
+        const filename = helpers.generateTimestampedFilename('podcast', 'mp3');
+
+        const filePath = helpers.saveAudioFile(response.data, filename);
+
         helpers.logSuccess(`Audio generated: ${filename}`);
-        
+
         return filePath;
-        
+
     } catch (error) {
         helpers.handleApiError(error, 'ElevenLabs');
         throw new Error('Failed to generate audio');
@@ -228,14 +213,14 @@ async function generateAudio(text) {
 
 /**
  * Main function that coordinates the entire podcast generation process
- * 
+ *
  * BACKEND CONCEPTS LEARNED:
  * - Function composition
  * - Error handling with try/catch
  * - Input validation
  * - User feedback (logging)
  * - Control flow
- * 
+ *
  * TODO: Complete this function to:
  * 1. Validate environment variables are set
  * 2. Call fetchNews() and check the result
@@ -249,7 +234,7 @@ async function generatePodcast() {
     console.log('\n' + '='.repeat(60));
     console.log('🎙️  AI PODCAST GENERATOR');
     console.log('='.repeat(60));
-    
+
     try {
         // TODO: Validate environment variables
         // HINT: Use helpers.validateEnvironmentVariables() with array of required vars
