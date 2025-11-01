@@ -45,8 +45,10 @@ async function fetchNews() {
     helpers.logStep(1, 'Fetching trending news from NewsAPI');
 
     try {
+        //newsapi endpoint
         const url = 'https://newsapi.org/v2/top-headlines';
 
+        //query params
         const params = {
             apiKey: process.env.NEWSAPI_KEY,
             country: 'us',
@@ -56,7 +58,13 @@ async function fetchNews() {
 
         const response = await axios.get(url, {params});
 
+        //validating response
+        if (!helpers.isValidApiResponse(response)) {
+          helpers.handleApiError(new Error('Invalid Response'), 'NewsAPI');
+          throw new Error('Invalid NewsAPI response');
+        }
         const articles = response.data.articles || [];
+
 
         helpers.logSuccess(`Fetched ${articles.length} news articles`);
 
