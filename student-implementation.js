@@ -201,15 +201,19 @@ async function generateAudio(text) {
     helpers.logStep(3, 'Converting text to speech with ElevenLabs');
 
     try {
-        
+        //voice ID from env
         const voiceId = process.env.PODCAST_VOICE_ID || '21m00Tcm4TlvDq8ikWAM';
+
+        //elevenlabs endpoint
         const url = 'https://api.elevenlabs.io/v1/text-to-speech/${voiceID}';
 
+        //headers xi-api-key
         const headers = {
             'xi-api-key': process.env.ELEVENLABS_API_KEY,
             'Content-Type': 'application/json'
         };
 
+        //req
         const data = {
             text: text,
             model_id: 'eleven_monolingual_v1',
@@ -219,7 +223,18 @@ async function generateAudio(text) {
             }
         };
 
+        //needs 'arraybuffer' for audio
         const response = await axios.post(url, data, {headers, responseType: 'arraybuffer'});
+
+        //error handling for response
+        if (!helpers.isValidApiResponse(response)) {
+            if (response.status !== 200) {
+                helpers.handleApiError(new Error('Invalid ElevenLabs response'), 'ElevenLabs');
+                throw new Error('Invalid ElevenLabs response');
+            }
+        }
+
+        //generating filename + save audio buffer
         const filename = helpers.generateTimestampedFilename('podcast', 'mp3');
 
         const filePath = helpers.saveAudioFile(response.data, filename);
