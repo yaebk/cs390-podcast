@@ -289,7 +289,7 @@ async function generatePodcast() {
     } catch (error) {
         console.error('\n❌ PODCAST GENERATION FAILED');
         console.error('Error:', error.message);
-        console.error('\n💡 Check the error messages above f pror details)
+        console.error('\n Check the error messages above for prior details');
         process.exit(1);
     }
 }
