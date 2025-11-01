@@ -115,16 +115,22 @@ async function generateScript(articles) {
     helpers.logStep(2, 'Generating podcast script with OpenAI');
 
     try {
+        //format article for AI
         const formattedNews = helpers.formatArticlesForSummary(articles);
+
+        //create prompt for AI
         const prompt = helpers.createPodcastPrompt(formattedNews);
 
+        //chat completion endpoint
         const url = 'https://api.openai.com/v1/chat/completions';
 
+        //headers, need bearer token
         const headers = {
             Authorization: 'Bearer ${process.env.OPENAI_API_KEY}',
             'Content-Type': 'application/json'
         };
 
+       //request data
         const data = {
             model: 'gpt-3.5-turbo',
             messages: [
@@ -138,11 +144,23 @@ async function generateScript(articles) {
         };
 
         const response = await axios.post(url, data, { headers };
+
+        if (!helpers.isValidApiResponse(response)) {
+            helpers.handleApiError(new Error('Invalid OpenAI response'), 'OpenAI');
+            throw new Error('Invalid OpenAI response');
+        }
+
+        //get script texct
         const script = 'response.data.choices[0].message.content';
 
-        helpers.logSuccess('Podcast script generated');
-        console.log(`   Script length: ${script.length} characters`);
+        if (!script) {
+            throw new Error('OpenAI returned empty script');
+        }
 
+        helpers.logSuccess('Podcast script generated');
+        console.log(` Script length: ${script.length} characters`);
+
+        //save script to file
         helpers.saveTextFile(script, 'podcast-script.txt.');
         return script;
 
@@ -183,6 +201,7 @@ async function generateAudio(text) {
     helpers.logStep(3, 'Converting text to speech with ElevenLabs');
 
     try {
+        
         const voiceId = process.env.PODCAST_VOICE_ID || '21m00Tcm4TlvDq8ikWAM';
         const url = 'https://api.elevenlabs.io/v1/text-to-speech/${voiceID}';
 
