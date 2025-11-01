@@ -43,26 +43,20 @@ const helpers = require('./api-helpers');
  */
 async function fetchNews() {
     helpers.logStep(1, 'Fetching trending news from NewsAPI');
-    
+
     try {
-        // TODO: Define the API endpoint
-        // HINT: https://newsapi.org/v2/top-headlines
         const url = 'https://newsapi.org/v2/top-headlines';
-        
-        // TODO: Set up query parameters
-        // HINT: You need apiKey, country ('us'), category ('technology'), pageSize (5)
+
         const params = {
             apiKey: process.env.NEWSAPI_KEY,
-            // Add more parameters here
+            country: 'us',
+            category: 'technology',
+            pageSize: 5,
         };
-        
-        // TODO: Make the GET request
-        // HINT: await axios.get(url, { params })
-        const response = null;
-        
-        // TODO: Extract articles from response
-        // HINT: response.data.articles
-        const articles = [];
+
+        const response = await axios.get(url, {params});
+
+        const articles = response.data.articles || [];
         
         helpers.logSuccess(`Fetched ${articles.length} news articles`);
         
