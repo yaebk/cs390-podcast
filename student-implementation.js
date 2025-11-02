@@ -122,11 +122,12 @@ async function generateScript(articles) {
         const prompt = helpers.createPodcastPrompt(formattedNews);
 
         //chat completion endpoint
-        const url = 'https://api.openai.com/v1/chat/completions';
+        const url = `https://api.openai.com/v1/chat/completions`;
 
         //headers, need bearer token
         const headers = {
-            Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, 'Content-Type': 'application/json'
+            'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+            'Content-Type': 'application/json'
         };
 
        //request data
@@ -149,8 +150,8 @@ async function generateScript(articles) {
             throw new Error('Invalid OpenAI response');
         }
 
-        //get script texct
-        const script = 'response.data.choices[0].message.content';
+        //get script text
+        const script = response.data.choices[0].message.content;
 
         if (!script) {
             throw new Error('OpenAI returned empty script');
@@ -160,7 +161,7 @@ async function generateScript(articles) {
         console.log(` Script length: ${script.length} characters`);
 
         //save script to file
-        helpers.saveTextFile(script, 'podcast-script.txt.');
+        helpers.saveTextFile(script, 'podcast-script.txt');
         return script;
 
     } catch (error) {
@@ -204,7 +205,7 @@ async function generateAudio(text) {
         const voiceId = process.env.PODCAST_VOICE_ID || '21m00Tcm4TlvDq8ikWAM';
 
         //elevenlabs endpoint
-        const url = 'https://api.elevenlabs.io/v1/text-to-speech/${voiceID}';
+        const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceID}`;
 
         //headers xi-api-key
         const headers = {
