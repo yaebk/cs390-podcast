@@ -122,7 +122,7 @@ async function generateScript(articles) {
         const prompt = helpers.createPodcastPrompt(formattedNews);
 
         //chat completion endpoint
-        const url = `https://api.openai.com/v1/chat/completions`;
+        const url = 'https://api.openai.com/v1/chat/completions';
 
         //headers, need bearer token
         const headers = {
