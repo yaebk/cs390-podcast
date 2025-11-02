@@ -205,7 +205,7 @@ async function generateAudio(text) {
         const voiceId = process.env.PODCAST_VOICE_ID || '21m00Tcm4TlvDq8ikWAM';
 
         //elevenlabs endpoint
-        const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceID}`;
+        const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`;
 
         //headers xi-api-key
         const headers = {
